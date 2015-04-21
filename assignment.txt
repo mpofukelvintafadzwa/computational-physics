@@ -1,0 +1,6 @@
+ls -lrt (list all files with the most recent displayed last)
+
+for a fine named new.txt type the following (more -25 new.txt or  head -25 new.txt); or  for a file named "etc/me/" type the following (sed -n,25p/etc/me) ;
+for a file named new.txt to display a range  use the command (sed -n '16,25p' new.txt)
+
+use either the (man -f (name) or whatis (name)) operations
