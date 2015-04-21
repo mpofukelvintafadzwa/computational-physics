@@ -1,0 +1,6 @@
+kelvin mpofu(213572387@stu.ukzn.ac.za)
+
+stochastic physical systems simulation (random walks and wave phenomena)
+analysis of empirical data
+monte carlo simulations 
+random number generators and markov chains simulations
