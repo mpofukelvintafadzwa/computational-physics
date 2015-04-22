@@ -1,0 +1,100 @@
+#question1
+
+import numpy
+
+def vectorpi(n):
+   v=numpy.arange(0,n) 
+   #lists numbers  1 to n
+   v=0.5*v*numpy.pi/(n-1)
+   return v
+
+# question 2
+
+import numpy
+from tutorial2 import vectorpi #assignment is the file containing the module called vector
+def integrate(n):
+    dx=numpy.pi/2/n
+    vec=vectorpi(n)
+    tot=numpy.sum(numpy.cos(vec))
+    return dx*tot
+
+#question2B
+import numpy
+from tutorial2 import vectorpi
+from tutorial2 import integrate
+
+def del_hardcoded(n):
+	mydeltas=[10,30,100,300,1000]
+	for n in mydeltas:
+	    numerical_integral=integrate(n)
+	    print 'simple integration with ' + repr(n) + ' points gives ' + repr(numerical_integral)
+
+#question3 (used in question 4)
+
+#vec=numpy.cos(vectorpi(n))
+
+#	x_even=vec[2:-1:2]
+#	x_odd=vec[1:-1:2]
+
+
+#question4
+import numpy
+from tutorial2 import integrate #for comparison purposes
+from tutorial2 import vectorpi
+
+def simpson_integral(n):
+	deltas=numpy.pi/2/(n-1)*2
+	vec=numpy.cos(vectorpi(n))
+
+	x_even=vec[2:-1:2]
+	x_odd=vec[1:-1:2]
+	total=numpy.sum(x_even)/3+numpy.sum(x_odd)*2/3+vec[0]/6+vec[-1]/6
+	return total*deltas
+
+
+#question4B
+
+import numpy
+from tutorial2 import simpson_integral
+from tutorial2 import vectorpi
+
+def number_errors(n):
+		integral_val=simpson_integral(n)
+		int_err=numpy.abs(integral_val-1)
+		print 'error on 11 points is ' + repr(int_err-1)
+		vec=numpy.cos(vectorpi(n))
+		x_even=vec[2:-1:2]
+		for n in x_even:
+		    int_err=numpy.abs(simpson_integral(n)-1)
+		    print 'simpsons error on ' + repr(n) + ' is ' + repr(int_err)
+
+#question5
+import numpy
+from matplotlib import pyplot as plt
+from tutorial2 import vectorpi
+from tutorial2 import simpson_integral
+def error_plot(n):
+	nelem=[11,310,1010,3010,10010,30010,100010,300010,1000010]
+	nelem=numpy.array(nelem)
+	simpson_err=numpy.zeros(nelem.size)
+	simple_err=numpy.zeros(nelem.size)
+	for ii in range(nelem.size):
+		n=nelem[ii]
+		simpson_err[ii]=numpy.abs(simpson_integral(n)-1)
+		simple_err[ii]=numpy.abs(simpson_integral(n)-1)
+		plt.plot(nelem,simple_err)
+		plt.plot(nelem,simpson_err)
+		ax=plt.gca()
+		ax.set_yscale('log')
+		ax.set_xscale('log')
+	plt.show()
+
+#first bonus question
+
+#It works by judging by the flatness and slope of the function it is integrating how to treat the step size it uses for numerical integration in order to maximize efficiency. What this means is that you may get slightly different answers from one region to the next even if they're analytically the same.
+
+#second bonus question (works with scipy)
+#from scipy import integrate
+#N = 5
+#def f(t, x):
+#   return np.exp(-x*t) / t**N
