@@ -1,0 +1,14 @@
+Question 1
+The assert at the end of the get bc method acts as a fail switch for the code in the case where a user enters.
+boundary conditions which are neither smooth nor periodic.In this case the given boundary conditions not satisfying
+the smooth and period conditions will then loop over these and then reach the assert statement which will fail thus terminating
+the code which would otherwise have had continued to run thus potentially leading to wrong results.It is the eqivalent of adding an
+error message to terminate a program which has malfunctioned.
+
+Question 2
+Each pulling point is a distance dx away from the central point hence the net pulling effect is 2 dx since there is pulling from both the left and right
+neighbours in order to get the derivative which is why we need to divide by 2dx rather than dx when we calculate the derivative.
+
+Question 3
+The time step calculator is given by
+c_s=numpy.sqrt(self.gamma*self.P/self.rho)
