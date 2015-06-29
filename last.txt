@@ -1,0 +1,114 @@
+import numpy
+from matplotlib import pyplot as plt
+from numpy import *
+from numpy.fft import fft, ifft, fftfreq
+import time
+
+class Particles:
+	def __init__(self,n=1000,G=1.0,soft=0.1,L=1.0,m=1.0,dt=0.1):
+		self.x=numpy.random.randn(n)
+		self.y=numpy.random.randn(n)
+		self.m=numpy.ones(n)*(1.0/n)
+		self.vx=numpy.zeros(n)
+		self.vy=numpy.zeros(n)
+		self.opts={}
+		self.opts['dt']=dt
+		self.opts['n']=n
+		self.opts['G']=G
+		self.opts['soft']=soft
+		self.k= numpy.zeros(n)
+		
+#Set up a charge distribution on the grid
+
+	def space_volu(self):
+		dx=self.x[i]-self.x[i+1:]
+		return volume=dx*dx*dx
+
+	def density_grid(self):
+		density=0.0
+		charges=1
+		mass=self.mass
+		x=self.x
+		y=self.y
+		for i in range(len(x)):
+		dist_sqaured= (self.x[i]-self.x)**2+(self.y[i]-self.y)**2
+		if (dist_sqaured<charges):
+		if (dist_sqaured<0.5*charges):
+		density += 8.0/numpy.pi*(1.0-6.0*dist_sqaured**2 + 0.6*dist_sqaured**3)
+		else:
+		density += 16.0/numpy.pi* (1.0-dist_sqaured)**3
+		return density*mass
+
+	def density_charge(self):
+		x=self.x
+		y=self.y
+		mass=self.mass 
+		density=0.0
+		dx=self.x[i]-self.x[i+1:]
+		for i in range(len(x)):
+		if ((abs(x[i]-x)) < dx and (abs(y[i]-y) < dx):
+		density += mass*((1.0 - abs(x[i]-x)/dx)*(1.0 - abs(y[i]-y)/dx)
+		return density
+
+#FFT charge distribution
+	def charge_distrib(self):
+		xx=self.x.shape[0]
+		yy=self.y.shape[0]
+		nx=numpy.arange(xx)
+		ny=numpy.arange(yy)
+		kx=nx.reshape((xx,1))
+		Ky=ny.reshape((yy,1))
+		k=kx*nx/xx + ky*ny/yy
+		j=complex(0,1)
+		K2=kx**2+ky**2
+		charge_density=numpy.sum(numpy.exp(-2j*numpy.pi*k))
+		charge_densityfft=numpy.fft.fft(charge_density) 
+		charge_density_f=(-4*numpy.pi/K2)*charge_densityfft
+		return charge_density
+
+	def softened_pot(self):
+		pot=0
+		for i in range(0,self.opts['n']-1):
+		dx=self.x[i]-self.x[i+1:]
+		dy=self.y[i]-self.y[i+1:]
+		rsqr=(dx*dx+dy*dy)
+		rsqr[rsqr<self.opts['soft']]=self.opts['soft']
+		r=numpy.sqrt(rsqr)
+		r3inv=1.0/(r*rsqr)
+		pot_1=(pot+numpy.sum(self.m[i]*self.m[i+1:]*1.0/r))*self.charge_distrib() 
+		pot=fft.ifft(pot_1) #reverse FFT to transform potential to real space
+		return pot
+		#next step is to calculate forces
+		#calculating forces
+	
+	def get_forces(self):
+		self.fx=numpy.zeros(self.opts['n'])
+		self.fy=numpy.zeros(self.opts['n'])
+		for i in range(0,self.opts['n'-1]):
+		self.fx[i]-=numpy.sum(dx*self.softened_pot()*self.m[i+1:])
+		self.fy[i]-=numpy.sum(dx*self.softened_pot()*self.m[i+1:])
+		self.fx[i+1:]+=dx*self.softened_pot()*self.m[i]
+		self.fy[i+1:]+=dy*self.softened_pot()*self.m[i]
+		return force
+
+	def evolve(self):
+		self.x+=self.vx*self.opts['dt']
+		self.y+=self.vy*self.opts['dt']
+		pot=self.softened_potential()
+		self.vx+=self.fx*self.opts['dt']
+		self.vy+=self.fy*self.opts['dt']
+		kinetic=0.5*numpy.sum(self.m*(self.vx**2+self.vy**2))
+		return pot+kinetic
+
+	if __name__=='__main__':
+	part=Particles()
+	plt.ion()
+	nstep=200
+	kk=numpy.zeros(nstep)
+	pp=numpy.zeros(nstep)
+	for xx in range(0,nstep):
+	plt.clf()
+	plt.plot(part.x,part.y,'*')
+	plt.draw()
+	
+	
